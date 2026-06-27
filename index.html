@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS - Dashboard de Estudos Sprints</title>
+    <title>JARVIS - Dashboard de Estudos Avançado</title>
     <style>
         * {
             box-sizing: border-box;
@@ -77,13 +77,22 @@
 
         .input-group {
             display: flex;
+            flex-direction: column;
             gap: 10px;
             margin-bottom: 2rem;
+            background: #111827;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #374151;
         }
 
-        input[type="text"] {
-            flex: 1;
-            background: #111827;
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"], select {
+            background: #1f2937;
             border: 1px solid #4b5563;
             padding: 0.75rem 1rem;
             border-radius: 6px;
@@ -93,7 +102,16 @@
             transition: border-color 0.2s;
         }
 
-        input[type="text"]:focus {
+        input[type="text"] {
+            flex: 2;
+        }
+
+        select {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        input[type="text"]:focus, select:focus {
             border-color: #3b82f6;
         }
 
@@ -106,6 +124,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: background 0.2s;
+            width: 100%;
         }
 
         button.btn-add:hover {
@@ -139,6 +158,29 @@
             text-decoration: line-through;
             color: #9ca3af;
         }
+
+        .task-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            width: fit-content;
+        }
+
+        /* Classes de Estilização das Badges */
+        .badge-geometria { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+        .badge-algebra { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
+        .badge-programacao { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; }
+        .badge-historia { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+        .badge-outros { background-color: rgba(107, 114, 128, 0.2); color: #d1d5db; border: 1px solid #6b7280; }
 
         .task-left {
             display: flex;
@@ -226,8 +268,17 @@
         </div>
 
         <div class="input-group">
-            <input type="text" id="task-input" placeholder="Ex: Estudar POO em Python - Módulo 1" autocomplete="off">
-            <button class="btn-add" id="btn-add">Adicionar</button>
+            <div class="input-row">
+                <input type="text" id="task-input" placeholder="Ex: Rever assunto de triângulos" autocomplete="off">
+                <select id="category-input">
+                    <option value="geometria">Geometria</option>
+                    <option value="algebra">Álgebra</option>
+                    <option value="programacao">Programação</option>
+                    <option value="historia">História</option>
+                    <option value="outros">Outros</option>
+                </select>
+            </div>
+            <button class="btn-add" id="btn-add">Adicionar Meta de Estudo</button>
         </div>
 
         <ul class="task-list" id="task-list">
@@ -236,6 +287,7 @@
 
     <script>
         const taskInput = document.getElementById('task-input');
+        const categoryInput = document.getElementById('category-input');
         const btnAdd = document.getElementById('btn-add');
         const taskList = document.getElementById('task-list');
         const totalTasksEl = document.getElementById('total-tasks');
@@ -262,10 +314,23 @@
                 const li = document.createElement('li');
                 li.className = `task-item ${task.completed ? 'completed' : ''}`;
                 
+                const categoryNames = {
+                    geometria: 'Geometria',
+                    algebra: 'Álgebra',
+                    programacao: 'Programação',
+                    historia: 'História',
+                    outros: 'Outros'
+                };
+
+                const categoryLabel = categoryNames[task.category] || 'Outros';
+                
                 li.innerHTML = `
                     <div class="task-left" onclick="toggleTask(${index})">
                         <div class="checkbox-container"></div>
-                        <span class="task-text">${escapeHTML(task.text)}</span>
+                        <div class="task-content-wrapper">
+                            <span class="category-badge badge-${task.category || 'outros'}">${categoryLabel}</span>
+                            <span class="task-text">${escapeHTML(task.text)}</span>
+                        </div>
                     </div>
                     <button class="btn-delete" onclick="deleteTask(event, ${index})">Excluir</button>
                 `;
@@ -290,9 +355,15 @@
 
         function addTask() {
             const text = taskInput.value.trim();
+            const category = categoryInput.value;
             if (text === '') return;
 
-            tasks.push({ text: text, completed: false });
+            tasks.push({
+                text: text,
+                category: category,
+                completed: false
+            });
+
             taskInput.value = '';
             renderTasks();
         }
