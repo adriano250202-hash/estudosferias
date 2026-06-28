@@ -290,6 +290,9 @@
             font-style: italic;
         }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
 
@@ -353,6 +356,21 @@
     </div>
 
     <script>
+        // Configuração do Web App com as credenciais do seu projeto adriano2emba
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMMpNbBKgiIrak4Bu9wK81emNHJhUrKsQ",
+            authDomain: "adriano2emba.firebaseapp.com",
+            databaseURL: "https://adriano2emba-default-rtdb.firebaseio.com",
+            projectId: "adriano2emba",
+            storageBucket: "adriano2emba.firebasestorage.app",
+            messagingSenderId: "174175436846",
+            appId: "1:174175436846:web:372bb1fba10bd7097e1fbf"
+        };
+
+        // Inicialização do ecossistema Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         const taskInput = document.getElementById('task-input');
         const categoryInput = document.getElementById('category-input');
         const dateInput = document.getElementById('date-input');
@@ -362,10 +380,15 @@
         const completedTasksEl = document.getElementById('completed-tasks');
         const progressPctEl = document.getElementById('progress-pct');
 
-        let tasks = JSON.parse(localStorage.getItem('jarvis_study_tasks')) || [];
+        let tasks = [];
 
         function init() {
-            renderTasks();
+            // Sincronização em tempo real com a nuvem da Google
+            database.ref('study_tasks').on('value', (snapshot) => {
+                const data = snapshot.val();
+                tasks = data ? Object.values(data) : [];
+                renderTasks();
+            });
             setupEventListeners();
         }
 
@@ -374,7 +397,7 @@
             
             if (tasks.length === 0) {
                 taskList.innerHTML = '<li class="empty-state">Nenhuma meta de estudo cadastrada para estas férias, Senhor.</li>';
-                updateStats();
+                updateLocalStatsDisplay();
                 return;
             }
 
@@ -434,10 +457,10 @@
                 taskList.appendChild(li);
             });
 
-            updateStats();
+            updateLocalStatsDisplay();
         }
 
-        function updateStats() {
+        function updateLocalStatsDisplay() {
             const total = tasks.length;
             const completed = tasks.filter(t => t.completed).length;
             const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
@@ -445,8 +468,10 @@
             totalTasksEl.textContent = total;
             completedTasksEl.textContent = completed;
             progressPctEl.textContent = `${pct}%`;
+        }
 
-            localStorage.setItem('jarvis_study_tasks', JSON.stringify(tasks));
+        function syncWithFirebase() {
+            database.ref('study_tasks').set(tasks);
         }
 
         function addTask() {
@@ -465,18 +490,18 @@
 
             taskInput.value = '';
             dateInput.value = '';
-            renderTasks();
+            syncWithFirebase();
         }
 
         window.toggleTask = function(index) {
             tasks[index].completed = !tasks[index].completed;
-            renderTasks();
+            syncWithFirebase();
         };
 
         window.deleteTask = function(event, index) {
             event.stopPropagation();
             tasks.splice(index, 1);
-            renderTasks();
+            syncWithFirebase();
         };
 
         function setupEventListeners() {
