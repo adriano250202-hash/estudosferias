@@ -491,12 +491,12 @@
         function renderSubjectDetails(id) {
             const subData = dbState[id] || {};
             
-            // Exibir arquivo anexado se houver (Com correção de download seguro)
+            // Exibir arquivo anexado se houver (Configurado para abertura direta)
             const linkContainer = document.getElementById('file-link-container');
             if (subData.fileAttachment) {
                 linkContainer.innerHTML = `
-                    <button onclick="downloadSyllabusFile('${id}')" class="attachment-link" style="cursor:pointer;">
-                        📄 Descarregar Ementa (${subData.fileAttachment.name})
+                    <button onclick="openSyllabusDirectly('${id}')" class="attachment-link" style="cursor:pointer;">
+                        📄 Visualizar Ementa (${subData.fileAttachment.name})
                     </button>
                     <button class="btn-remove-file" onclick="removeSyllabusFile()">Excluir Anexo</button>
                 `;
@@ -566,21 +566,45 @@
             reader.readAsDataURL(file);
         };
 
-        // Função injetada para contornar o bloqueio de exibição em lote do navegador (Forçar Download seguro)
-        window.downloadSyllabusFile = function(id) {
+        // NOVA FUNÇÃO ENGENHOSA: Converte Base64 para Blob para abrir em nova aba sem baixar
+        window.openSyllabusDirectly = function(id) {
             const subData = dbState[id];
             if (!subData || !subData.fileAttachment) return;
 
-            const base64Data = subData.fileAttachment.data;
-            const fileName = subData.fileAttachment.name;
+            const rawBase64 = subData.fileAttachment.data;
+            const fileType = subData.fileAttachment.type;
 
-            const downloadLink = document.createElement("a");
-            downloadLink.href = base64Data;
-            downloadLink.download = fileName;
+            try {
+                // Remove os metadados iniciais da string base64 (ex: "data:application/pdf;base64,")
+                const block = rawBase64.split(';');
+                const contentType = block[0].split(":")[1];
+                const realData = block[1].split(",")[1];
 
-            document.body.appendChild(downloadLink);
-            downloadLink.click();
-            document.body.removeChild(downloadLink);
+                // Decodifica a string base64 em dados binários puros
+                const sliceSize = 1024;
+                const byteCharacters = atob(realData);
+                const byteArrays = [];
+
+                for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                    const slice = byteCharacters.slice(offset, offset + sliceSize);
+                    const byteNumbers = new Array(slice.length);
+                    for (let i = 0; i < slice.length; i++) {
+                        byteNumbers[i] = slice.charCodeAt(i);
+                    }
+                    const byteArray = new Uint8Array(byteNumbers);
+                    byteArrays.push(byteArray);
+                }
+
+                // Cria o Blob na memória e gera uma URL virtual nativa para o navegador ler
+                const blob = new Blob(byteArrays, { type: contentType });
+                const blobUrl = URL.createObjectURL(blob);
+
+                // Abre o arquivo limpo diretamente em uma nova guia!
+                window.open(blobUrl, '_blank');
+            } catch (error) {
+                console.error("Erro ao converter arquivo:", error);
+                alert("Não foi possível renderizar o arquivo diretamente. Tente reanexá-lo, Senhor.");
+            }
         };
 
         window.removeSyllabusFile = function() {
