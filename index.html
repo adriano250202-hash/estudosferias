@@ -491,13 +491,13 @@
         function renderSubjectDetails(id) {
             const subData = dbState[id] || {};
             
-            // Exibir arquivo anexado se houver
+            // Exibir arquivo anexado se houver (Com correção de download seguro)
             const linkContainer = document.getElementById('file-link-container');
             if (subData.fileAttachment) {
                 linkContainer.innerHTML = `
-                    <a href="${subData.fileAttachment.data}" target="_blank" class="attachment-link">
-                        📄 Abrir Ementa (${subData.fileAttachment.name})
-                    </a>
+                    <button onclick="downloadSyllabusFile('${id}')" class="attachment-link" style="cursor:pointer;">
+                        📄 Descarregar Ementa (${subData.fileAttachment.name})
+                    </button>
                     <button class="btn-remove-file" onclick="removeSyllabusFile()">Excluir Anexo</button>
                 `;
             } else {
@@ -544,7 +544,7 @@
             });
         }
 
-        // NOVO FLUXO AVANÇADO: Upload de Arquivo via Base64 direto no Realtime Database
+        // Upload de Arquivo via Base64 direto no Realtime Database
         window.uploadSyllabusFile = function(input) {
             if (!currentSubjectId || !input.files || !input.files[0]) return;
             
@@ -554,7 +554,6 @@
             reader.onload = function(e) {
                 const base64Data = e.target.result;
                 
-                // Salva o objeto do arquivo direto na árvore NoSQL da matéria correspondente
                 database.ref(`study_hub_data/${currentSubjectId}/fileAttachment`).set({
                     name: file.name,
                     type: file.type,
@@ -565,6 +564,23 @@
             };
             
             reader.readAsDataURL(file);
+        };
+
+        // Função injetada para contornar o bloqueio de exibição em lote do navegador (Forçar Download seguro)
+        window.downloadSyllabusFile = function(id) {
+            const subData = dbState[id];
+            if (!subData || !subData.fileAttachment) return;
+
+            const base64Data = subData.fileAttachment.data;
+            const fileName = subData.fileAttachment.name;
+
+            const downloadLink = document.createElement("a");
+            downloadLink.href = base64Data;
+            downloadLink.download = fileName;
+
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
         };
 
         window.removeSyllabusFile = function() {
