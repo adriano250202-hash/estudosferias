@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JARVIS - Dashboard de Estudos Avançado</title>
+    <title>JARVIS - Hub de Estudos Avançado</title>
     <style>
         * {
             box-sizing: border-box;
@@ -22,7 +22,7 @@
 
         .container {
             width: 100%;
-            max-width: 850px;
+            max-width: 950px;
             background: #1f2937;
             padding: 2rem;
             border-radius: 12px;
@@ -34,6 +34,9 @@
             margin-bottom: 2rem;
             border-bottom: 2px solid #374151;
             padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         header h1 {
@@ -51,93 +54,184 @@
             margin-top: 4px;
         }
 
-        .stats-container {
-            background: #111827;
-            padding: 1rem;
-            border-radius: 8px;
+        .btn-back {
+            background: #4b5563;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+            display: none;
+        }
+
+        .btn-back:hover {
+            background: #374151;
+        }
+
+        /* TELA 1: GRID DE MATÉRIAS */
+        .section-title {
+            font-size: 1.2rem;
+            color: #9ca3af;
+            margin: 1.5rem 0 0.75rem 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
             margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-around;
+        }
+
+        .subject-card {
+            background: #111827;
             border: 1px solid #374151;
-        }
-
-        .stat-box {
+            border-radius: 8px;
+            padding: 1.5rem;
             text-align: center;
-        }
-
-        .stat-val {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #10b981;
-        }
-        
-        #progress-pct {
-            color: #3b82f6;
-        }
-
-        .input-group {
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 2rem;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subject-card:hover {
+            transform: translateY(-2px);
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .subject-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .subject-count {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            background: #1f2937;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Bordas Customizadas das Matérias para Separação Visual */
+        .card-geometria { border-top: 4px solid #ef4444; }
+        .card-algebra { border-top: 4px solid #3b82f6; }
+        .card-literatura { border-top: 4px solid #ec4899; }
+        .card-historia { border-top: 4px solid #f59e0b; }
+        .card-arte { border-top: 4px solid #a855f7; }
+        .card-gramatica { border-top: 4px solid #0d9488; }
+        .card-redacao { border-top: 4px solid #ea580c; }
+        .card-biologia { border-top: 4px solid #22c55e; }
+        .card-quimica { border-top: 4px solid #06b6d4; }
+        .card-fisica { border-top: 4px solid #6366f1; }
+        .card-geografia { border-top: 4px solid #84cc16; }
+        .card-filosofia { border-top: 4px solid #0ea5e9; }
+        .card-robotica { border-top: 4px solid #f43f5e; }
+        .card-introducao-projeto-final { border-top: 4px solid #eab308; }
+        .card-desenvolvimento-web-ii { border-top: 4px solid #10b981; }
+        .card-mobile { border-top: 4px solid #c084fc; }
+        .card-outros { border-top: 4px solid #6b7280; }
+
+        /* TELA 2: VISÃO INTERNA DA MATÉRIA */
+        #details-screen {
+            display: none;
+        }
+
+        .syllabus-box {
             background: #111827;
+            border: 1px solid #374151;
             padding: 1.25rem;
             border-radius: 8px;
-            border: 1px solid #374151;
+            margin-bottom: 2rem;
         }
 
-        .input-row {
+        .syllabus-title {
+            font-size: 1.1rem;
+            color: #60a5fa;
+            margin-bottom: 0.75rem;
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
         }
 
-        input[type="text"], input[type="date"], select {
+        textarea.syllabus-input {
+            width: 100%;
+            height: 100px;
             background: #1f2937;
             border: 1px solid #4b5563;
-            padding: 0.75rem 1rem;
             border-radius: 6px;
             color: #f3f4f6;
-            font-size: 1rem;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            resize: none;
             outline: none;
-            transition: border-color 0.2s;
+            margin-bottom: 0.5rem;
         }
 
-        input[type="text"] {
-            flex: 2;
-            min-width: 200px;
-        }
-
-        select {
-            flex: 1;
-            min-width: 150px;
-            cursor: pointer;
-        }
-
-        input[type="date"] {
-            flex: 1;
-            min-width: 150px;
-            cursor: pointer;
-        }
-
-        input[type="text"]:focus, select:focus, input[type="date"]:focus {
+        textarea.syllabus-input:focus {
             border-color: #3b82f6;
         }
 
-        button.btn-add {
+        .btn-save-syllabus {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .btn-save-syllabus:hover {
+            background: #059669;
+        }
+
+        /* Input de Objetivos por Matéria */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            background: #111827;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #374151;
+        }
+
+        .input-group input[type="text"] {
+            flex: 3;
+            background: #1f2937;
+            border: 1px solid #4b5563;
+            padding: 0.75rem;
+            border-radius: 6px;
+            color: #f3f4f6;
+        }
+
+        .input-group input[type="date"] {
+            flex: 1;
+            background: #1f2937;
+            border: 1px solid #4b5563;
+            padding: 0.75rem;
+            border-radius: 6px;
+            color: #f3f4f6;
+        }
+
+        .btn-add-object {
             background: #3b82f6;
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.75rem 1.25rem;
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-        }
-
-        button.btn-add:hover {
-            background: #2563eb;
         }
 
         .task-list {
@@ -155,7 +249,6 @@
             padding: 1rem;
             border-radius: 8px;
             border-left: 4px solid #3b82f6;
-            transition: all 0.2s;
         }
 
         .task-item.completed {
@@ -168,71 +261,12 @@
             color: #9ca3af;
         }
 
-        .task-content-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .meta-badges {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .category-badge {
-            display: inline-block;
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
-
-        .date-badge {
-            display: inline-block;
-            font-size: 0.75rem;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background-color: #1f2937;
-            color: #9ca3af;
-            border: 1px solid #374151;
-        }
-
-        .date-badge.atrasada {
-            background-color: rgba(239, 68, 68, 0.1);
-            color: #ef4444;
-            border-color: #ef4444;
-        }
-
-        /* Cores das Categorias Normais */
-        .badge-geometria { background-color: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
-        .badge-algebra { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #3b82f6; }
-        .badge-literatura { background-color: rgba(236, 72, 153, 0.2); color: #f472b6; border: 1px solid #ec4899; }
-        .badge-historia { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
-        .badge-arte { background-color: rgba(168, 85, 247, 0.2); color: #c084fc; border: 1px solid #a855f7; }
-        .badge-gramatica { background-color: rgba(45, 212, 191, 0.2); color: #2dd4bf; border: 1px solid #0d9488; }
-        .badge-redacao { background-color: rgba(251, 146, 60, 0.2); color: #fb923c; border: 1px solid #ea580c; }
-        .badge-biologia { background-color: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; }
-        .badge-quimica { background-color: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid #06b6d4; }
-        .badge-fisica { background-color: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid #6366f1; }
-        .badge-geografia { background-color: rgba(132, 204, 22, 0.2); color: #a3e635; border: 1px solid #84cc16; }
-        .badge-filosofia { background-color: rgba(14, 165, 233, 0.2); color: #38bdf8; border: 1px solid #0ea5e9; }
-
-        /* Cores das Categorias Técnicas */
-        .badge-robotica { background-color: rgba(244, 63, 94, 0.2); color: #fb7185; border: 1px solid #f43f5e; font-weight: 800; }
-        .badge-introducao-projeto-final { background-color: rgba(250, 204, 21, 0.2); color: #fde047; border: 1px solid #eab308; font-weight: 800; }
-        .badge-desenvolvimento-web-ii { background-color: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; font-weight: 800; }
-        .badge-mobile { background-color: rgba(192, 132, 252, 0.2); color: #e9d5ff; border: 1px solid #c084fc; font-weight: 800; }
-        .badge-outros { background-color: rgba(107, 114, 128, 0.2); color: #d1d5db; border: 1px solid #6b7280; }
-
         .task-left {
             display: flex;
             align-items: center;
             gap: 12px;
-            flex: 1;
             cursor: pointer;
+            flex: 1;
         }
 
         .checkbox-container {
@@ -243,8 +277,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
         }
 
         .task-item.completed .checkbox-container {
@@ -263,9 +295,21 @@
             display: block;
         }
 
-        .task-text {
-            font-size: 1rem;
-            word-break: break-word;
+        .date-badge {
+            font-size: 0.75rem;
+            padding: 2px 6px;
+            background: #1f2937;
+            border-radius: 4px;
+            color: #9ca3af;
+            border: 1px solid #374151;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        .date-badge.atrasada {
+            color: #ef4444;
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
         }
 
         .btn-delete {
@@ -273,24 +317,16 @@
             border: none;
             color: #ef4444;
             cursor: pointer;
-            font-size: 0.9rem;
             padding: 4px 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-
-        .btn-delete:hover {
-            background: rgba(239, 68, 68, 0.1);
         }
 
         .empty-state {
             text-align: center;
             color: #9ca3af;
-            padding: 2rem 0;
+            padding: 1.5rem 0;
             font-style: italic;
         }
     </style>
-
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
@@ -298,65 +334,38 @@
 
     <div class="container">
         <header>
-            <h1>JARVIS <span>Sprint Study Tracker</span></h1>
+            <h1 id="main-title">JARVIS <span>Sprint Study Tracker</span></h1>
+            <button class="btn-back" id="btn-back" onclick="showHomeScreen()">⬅ Voltar ao Hub</button>
         </header>
 
-        <div class="stats-container">
-            <div class="stat-box">
-                <div class="stat-val" id="total-tasks">0</div>
-                <div style="color: #9ca3af; font-size: 0.85rem; margin-top: 4px;">Total de Metas</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-val" id="completed-tasks" style="color: #10b981;">0</div>
-                <div style="color: #9ca3af; font-size: 0.85rem; margin-top: 4px;">Concluídas</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-val" id="progress-pct">0%</div>
-                <div style="color: #9ca3af; font-size: 0.85rem; margin-top: 4px;">Eficiência</div>
-            </div>
+        <div id="home-screen">
+            <div class="section-title">Matérias Normais</div>
+            <div class="subjects-grid" id="grid-normais"></div>
+
+            <div class="section-title">Matérias Técnicas</div>
+            <div class="subjects-grid" id="grid-tecnicas"></div>
         </div>
 
-        <div class="input-group">
-            <div class="input-row">
-                <input type="text" id="task-input" placeholder="Ex: Rever assunto de triângulos" autocomplete="off">
-                
-                <select id="category-input">
-                    <optgroup label="Matérias Normais">
-                        <option value="geometria">Geometria</option>
-                        <option value="algebra">Álgebra</option>
-                        <option value="literatura">Literatura</option>
-                        <option value="historia">História</option>
-                        <option value="arte">Arte</option>
-                        <option value="gramatica">Gramática</option>
-                        <option value="redacao">Redação</option>
-                        <option value="biologia">Biologia</option>
-                        <option value="quimica">Química</option>
-                        <option value="fisica">Física</option>
-                        <option value="geografia">Geografia</option>
-                        <option value="filosofia">Filosofia</option>
-                    </optgroup>
-                    <optgroup label="Matérias Técnicas">
-                        <option value="robotica">Robótica</option>
-                        <option value="introducao-projeto-final">Introdução ao Projeto Final</option>
-                        <option value="desenvolvimento-web-ii">Desenvolvimento Web II</option>
-                        <option value="mobile">Mobile</option>
-                    </optgroup>
-                    <optgroup label="Geral">
-                        <option value="outros">Outros</option>
-                    </optgroup>
-                </select>
-
-                <input type="date" id="date-input" title="Data limite para conclusão (opcional)">
+        <div id="details-screen">
+            <div class="syllabus-box">
+                <div class="syllabus-title">📖 Conteúdo Programático / Ementa da Disciplina</div>
+                <textarea class="syllabus-input" id="syllabus-text" placeholder="Anexe a ementa oficial, links de referência ou tópicos principais para este assunto aqui, Senhor..."></textarea>
+                <button class="btn-save-syllabus" onclick="saveSyllabus()">Salvar Ementa na Nuvem</button>
             </div>
-            <button class="btn-add" id="btn-add">Adicionar Meta de Estudo</button>
-        </div>
 
-        <ul class="task-list" id="task-list">
-            </ul>
+            <div class="section-title" style="margin-top:0;">🎯 Objetivos e Metas Práticas</div>
+            <div class="input-group">
+                <input type="text" id="object-input" placeholder="Ex: Resolver lista de exercícios de matrizes" autocomplete="off">
+                <input type="date" id="object-date">
+                <button class="btn-add-object" onclick="addObject()">Adicionar</button>
+            </div>
+
+            <ul class="task-list" id="object-list"></ul>
+        </div>
     </div>
 
     <script>
-        // Configuração do Web App com as credenciais do seu projeto adriano2emba
+        // Suas credenciais oficiais do Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAMMpNbBKgiIrak4Bu9wK81emNHJhUrKsQ",
             authDomain: "adriano2emba.firebaseapp.com",
@@ -367,148 +376,186 @@
             appId: "1:174175436846:web:372bb1fba10bd7097e1fbf"
         };
 
-        // Inicialização do ecossistema Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        const taskInput = document.getElementById('task-input');
-        const categoryInput = document.getElementById('category-input');
-        const dateInput = document.getElementById('date-input');
-        const btnAdd = document.getElementById('btn-add');
-        const taskList = document.getElementById('task-list');
-        const totalTasksEl = document.getElementById('total-tasks');
-        const completedTasksEl = document.getElementById('completed-tasks');
-        const progressPctEl = document.getElementById('progress-pct');
+        // Estrutura de Categorias divididas perfeitamente
+        const categories = {
+            normais: [
+                { id: 'geometria', name: 'Geometria' },
+                { id: 'algebra', name: 'Álgebra' },
+                { id: 'literatura', name: 'Literatura' },
+                { id: 'historia', name: 'História' },
+                { id: 'arte', name: 'Arte' },
+                { id: 'gramatica', name: 'Gramática' },
+                { id: 'redacao', name: 'Redação' },
+                { id: 'biologia', name: 'Biologia' },
+                { id: 'quimica', name: 'Química' },
+                { id: 'fisica', name: 'Física' },
+                { id: 'geografia', name: 'Geografia' },
+                { id: 'filosofia', name: 'Filosofia' }
+            ],
+            tecnicas: [
+                { id: 'robotica', name: 'Robótica' },
+                { id: 'introducao-projeto-final', name: 'Introdução ao Projeto Final' },
+                { id: 'desenvolvimento-web-ii', name: 'Desenvolvimento Web II' },
+                { id: 'mobile', name: 'Mobile' },
+                { id: 'outros', name: 'Outros' }
+            ]
+        };
 
-        let tasks = [];
+        let dbState = {}; 
+        let currentSubjectId = null;
 
         function init() {
-            // Sincronização em tempo real com a nuvem da Google
-            database.ref('study_tasks').on('value', (snapshot) => {
-                const data = snapshot.val();
-                tasks = data ? Object.values(data) : [];
-                renderTasks();
+            // Escuta a nova árvore NoSQL estruturada por matéria
+            database.ref('study_hub_data').on('value', (snapshot) => {
+                dbState = snapshot.val() || {};
+                renderHub();
+                if (currentSubjectId) {
+                    renderSubjectDetails(currentSubjectId);
+                }
             });
-            setupEventListeners();
+
+            document.getElementById('object-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addObject();
+            });
         }
 
-        function renderTasks() {
-            taskList.innerHTML = '';
+        function renderHub() {
+            const gridNormais = document.getElementById('grid-normais');
+            const gridTecnicas = document.getElementById('grid-tecnicas');
             
-            if (tasks.length === 0) {
-                taskList.innerHTML = '<li class="empty-state">Nenhuma meta de estudo cadastrada para estas férias, Senhor.</li>';
-                updateLocalStatsDisplay();
+            gridNormais.innerHTML = '';
+            gridTecnicas.innerHTML = '';
+
+            categories.normais.forEach(sub => gridNormais.appendChild(createCardElement(sub)));
+            categories.tecnicas.forEach(sub => gridTecnicas.appendChild(createCardElement(sub)));
+        }
+
+        function createCardElement(subject) {
+            const div = document.createElement('div');
+            div.className = `subject-card card-${subject.id}`;
+            div.onclick = () => showSubjectScreen(subject.id, subject.name);
+
+            // Resgata o total de objetivos criados na nuvem para esta matéria específica
+            const subData = dbState[subject.id] || {};
+            const tasksList = subData.tasks ? Object.values(subData.tasks) : [];
+            const pendingCount = tasksList.filter(t => !t.completed).length;
+
+            div.innerHTML = `
+                <span class="subject-name">${subject.name}</span>
+                <span class="subject-count">${pendingCount} pendente(s)</span>
+            `;
+            return div;
+        }
+
+        function showSubjectScreen(id, name) {
+            currentSubjectId = id;
+            document.getElementById('home-screen').style.display = 'none';
+            document.getElementById('details-screen').style.display = 'block';
+            document.getElementById('btn-back').style.display = 'block';
+            document.getElementById('main-title').innerHTML = `JARVIS <span>Estudos / ${name}</span>`;
+            
+            renderSubjectDetails(id);
+        }
+
+        function showHomeScreen() {
+            currentSubjectId = null;
+            document.getElementById('home-screen').style.display = 'block';
+            document.getElementById('details-screen').style.display = 'none';
+            document.getElementById('btn-back').style.display = 'none';
+            document.getElementById('main-title').innerHTML = `JARVIS <span>Sprint Study Tracker</span>`;
+        }
+
+        function renderSubjectDetails(id) {
+            const subData = dbState[id] || {};
+            
+            // Renderiza ementa
+            const syllabusTextarea = document.getElementById('syllabus-text');
+            if (document.activeElement !== syllabusTextarea) {
+                syllabusTextarea.value = subData.syllabus || '';
+            }
+
+            // Renderiza objetivos específicos daquela matéria
+            const objectList = document.getElementById('object-list');
+            objectList.innerHTML = '';
+
+            const tasksArray = subData.tasks ? Object.entries(subData.tasks) : [];
+
+            if (tasksArray.length === 0) {
+                objectList.innerHTML = '<li class="empty-state">Nenhum objetivo criado para esta matéria, Senhor.</li>';
                 return;
             }
 
             const hoje = new Date().setHours(0,0,0,0);
 
-            tasks.forEach((task, index) => {
+            tasksArray.forEach(([firebaseKey, task]) => {
                 const li = document.createElement('li');
                 li.className = `task-item ${task.completed ? 'completed' : ''}`;
-                
-                const categoryNames = {
-                    geometria: 'Geometria',
-                    algebra: 'Álgebra',
-                    literatura: 'Literatura',
-                    historia: 'História',
-                    arte: 'Arte',
-                    gramatica: 'Gramática',
-                    redacao: 'Redação',
-                    biologia: 'Biologia',
-                    quimica: 'Química',
-                    fisica: 'Física',
-                    geografia: 'Geografia',
-                    filosofia: 'Filosofia',
-                    robotica: 'Robótica',
-                    'introducao-projeto-final': 'Introdução ao Projeto Final',
-                    'desenvolvimento-web-ii': 'Desenvolvimento Web II',
-                    mobile: 'Mobile',
-                    outros: 'Outros'
-                };
 
-                const categoryLabel = categoryNames[task.category] || 'Outros';
-                
                 let dateBadgeHTML = '';
                 if (task.dueDate) {
                     const [ano, mes, dia] = task.dueDate.split('-');
                     const dataFormatada = `${dia}/${mes}/${ano}`;
-                    
                     const dataTarefa = new Date(ano, mes - 1, dia).getTime();
                     const estaAtrasada = !task.completed && dataTarefa < hoje;
-                    
-                    dateBadgeHTML = `<span class="date-badge ${estaAtrasada ? 'atrasada' : ''}">📅 ${dataFormatada}${estaAtrasada ? ' (Atrasada)' : ''}</span>`;
+                    dateBadgeHTML = `<br><span class="date-badge ${estaAtrasada ? 'atrasada' : ''}">📅 ${dataFormatada}${estaAtrasada ? ' (Atrasada)' : ''}</span>`;
                 }
-                
+
                 li.innerHTML = `
-                    <div class="task-left" onclick="toggleTask(${index})">
+                    <div class="task-left" onclick="toggleObject('${firebaseKey}', ${task.completed})">
                         <div class="checkbox-container"></div>
-                        <div class="task-content-wrapper">
-                            <div class="meta-badges">
-                                <span class="category-badge badge-${task.category || 'outros'}">${categoryLabel}</span>
-                                ${dateBadgeHTML}
-                            </div>
+                        <div>
                             <span class="task-text">${escapeHTML(task.text)}</span>
+                            ${dateBadgeHTML}
                         </div>
                     </div>
-                    <button class="btn-delete" onclick="deleteTask(event, ${index})">Excluir</button>
+                    <button class="btn-delete" onclick="deleteObject(event, '${firebaseKey}')">Excluir</button>
                 `;
-                
-                taskList.appendChild(li);
+                objectList.appendChild(li);
             });
-
-            updateLocalStatsDisplay();
         }
 
-        function updateLocalStatsDisplay() {
-            const total = tasks.length;
-            const completed = tasks.filter(t => t.completed).length;
-            const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+        // COMANDOS DE SINCRONIZAÇÃO EM NUVEM
 
-            totalTasksEl.textContent = total;
-            completedTasksEl.textContent = completed;
-            progressPctEl.textContent = `${pct}%`;
+        function saveSyllabus() {
+            if (!currentSubjectId) return;
+            const text = document.getElementById('syllabus-text').value;
+            database.ref(`study_hub_data/${currentSubjectId}/syllabus`).set(text)
+                .then(() => alert("Ementa guardada com sucesso nos servidores do Firebase, Senhor."));
         }
 
-        function syncWithFirebase() {
-            database.ref('study_tasks').set(tasks);
-        }
-
-        function addTask() {
-            const text = taskInput.value.trim();
-            const category = categoryInput.value;
+        function addObject() {
+            if (!currentSubjectId) return;
+            const input = document.getElementById('object-input');
+            const dateInput = document.getElementById('object-date');
+            const text = input.value.trim();
             const dueDate = dateInput.value;
-            
+
             if (text === '') return;
 
-            tasks.push({
+            // Gera uma hash única do Firebase para não sobrescrever dados de outros usuários
+            const newTaskRef = database.ref(`study_hub_data/${currentSubjectId}/tasks`).push();
+            newTaskRef.set({
                 text: text,
-                category: category,
                 dueDate: dueDate || null,
                 completed: false
             });
 
-            taskInput.value = '';
+            input.value = '';
             dateInput.value = '';
-            syncWithFirebase();
         }
 
-        window.toggleTask = function(index) {
-            tasks[index].completed = !tasks[index].completed;
-            syncWithFirebase();
-        };
+        function toggleObject(firebaseKey, currentStatus) {
+            if (!currentSubjectId) return;
+            database.ref(`study_hub_data/${currentSubjectId}/tasks/${firebaseKey}/completed`).set(!currentStatus);
+        }
 
-        window.deleteTask = function(event, index) {
+        function deleteObject(event, firebaseKey) {
             event.stopPropagation();
-            tasks.splice(index, 1);
-            syncWithFirebase();
-        };
-
-        function setupEventListeners() {
-            btnAdd.addEventListener('click', addTask);
-            taskInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') addTask();
-            });
+            if (!currentSubjectId) return;
+            database.ref(`study_hub_data/${currentSubjectId}/tasks/${firebaseKey}`).remove();
         }
 
         function escapeHTML(str) {
